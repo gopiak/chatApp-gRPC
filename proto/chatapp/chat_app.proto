@@ -1,0 +1,161 @@
+syntax = "proto3";
+
+
+package proto.chat_app;
+
+option go_package = "api/microservices/chatApp-gRPC/proto";
+
+option java_multiple_files = true;
+option java_package = "proto.kotlin";
+option java_outer_classname = "ChatApp";
+
+
+message QueryUser {
+  string user_id = 1;
+}
+
+message User {
+  string user_id = 1;
+  string name = 2;
+  UserStatusCode  status = 3;
+  Type type = 4;
+
+  enum Type{
+    UNKNOWN = 0;
+    EXPERT = 1;
+    PATIENT = 2;
+  }
+
+  enum UserStatusCode {
+    UNKNOWN_STATUS = 0;
+    LOGGED_OUT = 1;
+    OFFLINE = 2;
+    ONLINE = 3;
+  }
+}
+
+message ConnectUserRequest {
+  string user_id = 1;
+  string name = 2;
+  string device = 3;
+  Type type = 4;
+
+  enum Type{
+    UNKNOWN = 0;
+    EXPERT = 1;
+    PATIENT = 2;
+  }
+
+}
+
+message DisconnectUserRequest {
+  User user = 1;
+  string device = 2;
+}
+
+message ChatMessage {
+  string chat_id = 1;
+  User from_user = 2;
+  User to_user = 3;
+  string body = 4;
+  string time_stamp = 5;
+  string  reply_for_chat_id = 6;
+  bool attachment = 7;
+}
+
+message ChatMessageStatus{
+  ChatMessage chat_message = 1;
+  MessageStatus msg_status = 2;
+
+  enum MessageStatus {
+    UNKNOWN_STATUS = 0;
+    DELIVERED = 1;
+    SEEN = 2;
+    NOT_DELIVERED = 3;
+    FAILED = 4;
+  }
+}
+
+message ChatMessageResponse{
+  ChatMessage chat_message = 1;
+  MessageStatus msg_status = 2;
+
+  enum MessageStatus {
+    UNKNOWN_STATUS = 0;
+    DELIVERED = 1;
+    SEEN = 2;
+    NOT_DELIVERED = 3;
+    FAILED = 4;
+  }
+}
+
+
+message QueryMessagesRequest{
+  User user1 = 1;
+  User user2 = 2;
+  string time_constraint = 3;
+  int32 limit = 4;
+}
+
+message QueryMessagesResponse {
+  User user1 = 1;
+  User user2 = 2;
+  repeated  ChatMessage messages = 3;
+}
+
+message FileUploadChunk{
+  oneof UploadData {
+    FileUpload info = 1;
+    bytes content = 2;
+  };
+  message  FileUpload {
+    string file_name = 1;
+    ChatMessage chat_message = 2;
+  }
+}
+
+
+message FileUploadStatus {
+  string message = 1;
+  UploadStatusCode status = 2;
+
+  enum UploadStatusCode {
+    UNKNOWN_STATUS = 0;
+    OK = 1;
+    FAILED = 2;
+  }
+}
+
+message  FileDownloadChunk{
+  oneof DownloadData {
+    FileDownload info = 1;
+    bytes content = 2;
+  };
+  message  FileDownload {
+    string file_name = 1;
+    ChatMessage chat_message = 2;
+  }
+}
+
+service MessagingService{
+
+  rpc GetUser(QueryUser) returns (User);
+
+  rpc ConnectUser(ConnectUserRequest) returns (stream ChatMessage);
+
+  rpc DisconnectUser(DisconnectUserRequest) returns (User);
+
+  rpc BroadcastMessage(ChatMessage) returns (ChatMessageResponse);
+
+  rpc UpdateMessageStatus(ChatMessageStatus) returns (ChatMessageStatus);
+
+  rpc GetMessageStatus(ChatMessage) returns (ChatMessageStatus);
+
+  rpc GetMessages(QueryMessagesRequest) returns (QueryMessagesResponse);
+
+  //  rpc UserStatus(QueryUser) returns (User);
+
+  rpc UploadFile(stream FileUploadChunk) returns (FileUploadStatus);
+
+  rpc DownloadFile(ChatMessage) returns (stream FileDownloadChunk);
+}
