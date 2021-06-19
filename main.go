@@ -266,6 +266,10 @@ func getUserActiveConns(user *proto.User, s Server) ([]*StreamConn, error) {
 func (s Server) GetUser(ctx context.Context, user *proto.QueryUser) (*proto.User, error) {
 	//log.Printf("Is authenticated ? : %v\n", ctx.Value("isAuthenticated"))
 
+	if err := session.Query(`INSERT INTO chat_app.users (user_id, name, user_type, last_update_timestamp) VALUES (?,?,?,?) IF NOT EXISTS;`, user.GetUserId(), fmt.Sprintf("user %v", ctx.Value("user_uuid")), "expert", time.Now()).Exec(); err != nil {
+		log.Fatal(err)
+	}
+
 	return getUserObj(s, user.GetUserId())
 }
 

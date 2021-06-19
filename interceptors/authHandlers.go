@@ -2,11 +2,12 @@ package interceptors
 
 import (
 	"context"
+	"fmt"
+	"log"
+
 	firebase "firebase.google.com/go"
 	"firebase.google.com/go/auth"
-	"fmt"
 	"google.golang.org/api/option"
-	"log"
 
 	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	"google.golang.org/grpc/codes"
@@ -75,5 +76,6 @@ func AuthHandlingInterceptor(ctx context.Context) (context.Context, error) {
 
 	// WARNING: in production define your own type to avoid context collisions
 	newCtx := context.WithValue(ctx, "isAuthenticated", true)
+	newCtx = context.WithValue(newCtx, "user_uuid", userToken.UID)
 	return newCtx, nil
 }
