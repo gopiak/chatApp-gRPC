@@ -3,7 +3,7 @@ syntax = "proto3";
 
 package proto.chat_app;
 
-option go_package = "api/microservices/chatApp-gRPC/proto";
+option go_package = "github.com/webdevgopi/chatApp-gRPC/proto";
 
 option java_multiple_files = true;
 option java_package = "proto.kotlin";

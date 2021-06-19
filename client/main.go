@@ -5,7 +5,6 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"google.golang.org/grpc/metadata"
 	"io"
 	"io/ioutil"
 	"log"
@@ -14,8 +13,10 @@ import (
 	"sync"
 	"time"
 
-	"api/microservices/chatApp-gRPC/proto"
+	"google.golang.org/grpc/metadata"
+
 	"github.com/gocql/gocql"
+	"github.com/webdevgopi/chatApp-gRPC/proto"
 	"google.golang.org/grpc"
 )
 

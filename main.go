@@ -11,10 +11,10 @@ import (
 	"sync"
 	"time"
 
-	"api/microservices/chatApp-gRPC/db"
-	"api/microservices/chatApp-gRPC/interceptors"
-	"api/microservices/chatApp-gRPC/proto"
 	"github.com/gocql/gocql"
+	"github.com/webdevgopi/chatApp-gRPC/db"
+	"github.com/webdevgopi/chatApp-gRPC/interceptors"
+	"github.com/webdevgopi/chatApp-gRPC/proto"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
